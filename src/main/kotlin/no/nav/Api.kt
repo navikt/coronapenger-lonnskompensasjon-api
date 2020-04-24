@@ -66,7 +66,7 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
          val pingResponse = httpClient.get<HttpResponse>("$url/ping") {
             header("x-nav-apiKey", appConfig.property("no.nav.apigw.api_key").getString())
          }
-         call.respond(pingResponse.status, pingResponse.content)
+         call.respond(pingResponse.status, pingResponse.readText())
       }
    }
 }
