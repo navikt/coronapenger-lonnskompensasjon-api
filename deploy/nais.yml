@@ -1,0 +1,54 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+   name: coronapenger-lonnskompensasjon-api
+   namespace: default
+   labels:
+      team: teamcoronapenger
+spec:
+   port: 8080
+   ingresses:
+     {{#each ingresses as |url|}}
+         - {{url}}
+        {{/each}}
+   image: {{ image }}
+   replicas:
+      min: 2
+      max: 4
+      cpuThresholdPercentage: 75
+   resources:
+      limits:
+         cpu: 750m
+         memory: 2048Mi
+      requests:
+         cpu: 600m
+         memory: 1024Mi
+   liveness:
+      path: /internal/isalive
+      initialDelay: 20
+      timeout: 1
+      periodSeconds: 5
+      failureThreshold: 3
+   readiness:
+      path: /internal/isready
+      initialDelay: 20
+      timeout: 1
+   webproxy: true
+   prometheus:
+      enabled: true
+      path: /internal/metrics
+   secureLogs:
+      enabled: true
+   leaderElection: true
+   vault:
+      enabled: true
+      paths:
+         - mountPath: /var/run/secrets/nais.io/vault
+           kvPath: /kv/{{ vault_path_fragment }}/sbs/coronapenger-lonnskompensasjon-api/default
+   env:
+      -  name: KTOR_ENV
+         value: {{ ktor_env }}
+
+
+
+

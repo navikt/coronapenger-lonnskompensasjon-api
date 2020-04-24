@@ -1,0 +1,62 @@
+name: Build and deploy master
+
+on:
+   push:
+      branches:
+         - master
+
+env:
+   IMAGE: docker.pkg.github.com/${{ github.repository }}/coronapenger-lonnskompensasjon-api:${{ github.sha }}
+
+jobs:
+   build:
+      name: Build and push Docker container
+      runs-on: ubuntu-latest
+      steps:
+         -  uses: actions/checkout@v1
+         -  uses: gradle/wrapper-validation-action@v1
+         -  uses: actions/cache@v1
+            with:
+               path: ~/.gradle/caches
+               key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+               restore-keys: |
+                  ${{ runner.os }}-gradle-
+         -  uses: actions/setup-java@v1
+            with:
+               java-version: '12.x'
+         -  name: test and build
+            run: ./gradlew test build
+         -  name: Build and publish Docker image
+            env:
+               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            run: |
+               docker build --tag ${IMAGE} .
+               docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+               docker push ${IMAGE}
+
+   deploy_to_dev:
+      name: Deploy to dev
+      needs: build
+      if: github.ref == 'refs/heads/master'
+      runs-on: ubuntu-latest
+      steps:
+         -  uses: actions/checkout@v1
+         -  uses: nais/deploy/actions/deploy@v1
+            env:
+               APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+               CLUSTER: dev-sbs
+               RESOURCE: deploy/nais.yml
+               VARS: deploy/dev.yml
+   deploy_to_prod:
+      name: Deploy to prod
+      needs: [ build, deploy_to_dev ]
+      if: github.ref == 'refs/heads/master'
+      runs-on: ubuntu-latest
+      steps:
+         -  uses: actions/checkout@v1
+         -  uses: nais/deploy/actions/deploy@v1
+            env:
+               APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+               CLUSTER: prod-sbs
+               RESOURCE: deploy/nais.yml
+               VARS: deploy/prod.yml

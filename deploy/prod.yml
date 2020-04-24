@@ -1,0 +1,8 @@
+"vault_path_fragment": "prod"
+"vault_path_fragment_serviceuser": "prod"
+"cluster": "prod"
+"ktor_env": "prod"
+"ingresses": [
+   "https://coronapenger-lonnskompensasjon-api.nais.oera.no",
+   "https://www.nav.no/lonnskompensasjon-api"
+]
