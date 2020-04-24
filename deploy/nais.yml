@@ -50,6 +50,8 @@ spec:
    env:
       -  name: KTOR_ENV
          value: {{ ktor_env }}
+      -  name: APIGW_URL
+         value: {{ apigw_url }}
 
 
 
