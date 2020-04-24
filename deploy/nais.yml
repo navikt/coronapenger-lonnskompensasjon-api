@@ -45,6 +45,8 @@ spec:
       paths:
          - mountPath: /var/run/secrets/nais.io/vault
            kvPath: /kv/{{ vault_path_fragment }}/sbs/coronapenger-lonnskompensasjon-api/default
+         - mountPath: /secret/apikey
+           kvPath: /apikey/apigw/{{ vault_path_fragment_api_key }}/kp-saksbehandling/coronapenger-lonnskompensasjon-api{{ api_key_postfix }}
    env:
       -  name: KTOR_ENV
          value: {{ ktor_env }}
