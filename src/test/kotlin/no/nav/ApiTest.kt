@@ -25,7 +25,7 @@ class ApiTest {
    }
 
    @Test
-   fun `requests with valid idtoken are permitted`() {
+   fun `requests with valid idtoken in bearer header are permitted`() {
       withTestApplication({
          (environment.config as MapApplicationConfig).setOidcConfig()
          api()
@@ -97,7 +97,7 @@ class ApiTest {
    }
 
    @Test
-   fun `requests with wrong audience levels are forbidden`() {
+   fun `requests with wrong audience are forbidden`() {
       withTestApplication({
          (environment.config as MapApplicationConfig).setOidcConfig()
          api()
