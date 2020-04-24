@@ -59,14 +59,14 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
          get("/protected") {
             call.respond("Hello from protected")
          }
+      }
 
-         get("/ping") {
-            val url = appConfig.property("no.nav.apigw.base_url").getString()
-            val pingResponse = httpClient.get<HttpResponse>("$url/ping") {
-               header("x-nav-apiKey", appConfig.property("no.nav.apigw.api_key").getString())
-            }
-            call.respond(pingResponse)
+      get("/ping") {
+         val url = appConfig.property("no.nav.apigw.base_url").getString()
+         val pingResponse = httpClient.get<HttpResponse>("$url/ping") {
+            header("x-nav-apiKey", appConfig.property("no.nav.apigw.api_key").getString())
          }
+         call.respond(pingResponse)
       }
    }
 }
