@@ -17,6 +17,7 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import no.nav.security.token.support.ktor.*
 import org.slf4j.event.*
+import java.io.*
 
 @io.ktor.util.KtorExperimentalAPI
 val httpClient = HttpClient(CIO) {
@@ -63,8 +64,9 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
 
       get("/ping") {
          val url = appConfig.property("no.nav.apigw.base_url").getString()
+         val apiKey = File("/secret/apikey/x-nav-apiKey").readText()
          val pingResponse = httpClient.get<HttpResponse>("$url/ping") {
-            header("x-nav-apiKey", appConfig.property("no.nav.apigw.api_key").getString())
+            header("x-nav-apiKey", apiKey)
          }
          call.respond(pingResponse.status, pingResponse.readText())
       }
