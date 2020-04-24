@@ -2,6 +2,12 @@ package no.nav
 
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.config.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -11,6 +17,11 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import no.nav.security.token.support.ktor.*
 import org.slf4j.event.*
+
+@io.ktor.util.KtorExperimentalAPI
+val httpClient = HttpClient(CIO) {
+   install(JsonFeature) { serializer = KotlinxSerializer() }
+}
 
 @io.ktor.util.KtorExperimentalAPI
 fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
@@ -44,13 +55,17 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
    }
 
    routing {
-      get("/") {
-         call.respond("Hello!")
-      }
-
       authenticate {
          get("/protected") {
             call.respond("Hello from protected")
+         }
+
+         get("/ping") {
+            val url = appConfig.property("no.nav.apigw.base_url").getString()
+            val pingResponse = httpClient.get<HttpResponse>("$url/ping") {
+               header("x-nav-apiKey", appConfig.property("no.nav.apigw.api_key").getString())
+            }
+            call.respond(pingResponse)
          }
       }
    }

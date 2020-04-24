@@ -2,6 +2,7 @@
 "vault_path_fragment_serviceuser": "dev"
 "cluster": "preprod"
 "ktor_env": "dev"
+"apigw_url": "https://api-gw-q1.oera.no/kp-saksbehandling/kp-saksbehandling"
 "ingresses": [
    "https://coronapenger-lonnskompensasjon-api.nais.oera-q.local",
    "https://www-q1.nav.no/lonnskompensasjon-api"
