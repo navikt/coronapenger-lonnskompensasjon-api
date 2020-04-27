@@ -15,7 +15,7 @@ class ApiTest {
    @Test
    fun `requests without idtoken are forbidden`() {
       withTestApplication({
-         (environment.config as MapApplicationConfig).setOidcConfig()
+         (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
          handleRequest(HttpMethod.Get, "/protected").apply {
@@ -27,7 +27,7 @@ class ApiTest {
    @Test
    fun `requests with valid idtoken in bearer header are permitted`() {
       withTestApplication({
-         (environment.config as MapApplicationConfig).setOidcConfig()
+         (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
          handleRequest(HttpMethod.Get, "/protected") {
@@ -43,7 +43,7 @@ class ApiTest {
       withTestApplication({
          (environment.config as MapApplicationConfig).apply {
             put("no.nav.security.jwt.issuers.0.cookie_name", "selvbetjening-idtoken")
-         }.setOidcConfig()
+         }.setDefaultConfig()
          api()
       }) {
          handleRequest(HttpMethod.Get, "/protected") {
@@ -57,7 +57,7 @@ class ApiTest {
    @Test
    fun `requests with invalid idtoken are forbidden`() {
       withTestApplication({
-         (environment.config as MapApplicationConfig).setOidcConfig()
+         (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
          handleRequest(HttpMethod.Get, "/protected") {
@@ -71,7 +71,7 @@ class ApiTest {
    @Test
    fun `requests with invalid signature are forbidden`() {
       withTestApplication({
-         (environment.config as MapApplicationConfig).setOidcConfig()
+         (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
          handleRequest(HttpMethod.Get, "/protected") {
@@ -85,7 +85,7 @@ class ApiTest {
    @Test
    fun `requests with wrong acr levels are forbidden`() {
       withTestApplication({
-         (environment.config as MapApplicationConfig).setOidcConfig()
+         (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
          handleRequest(HttpMethod.Get, "/protected") {
@@ -99,7 +99,7 @@ class ApiTest {
    @Test
    fun `requests with wrong audience are forbidden`() {
       withTestApplication({
-         (environment.config as MapApplicationConfig).setOidcConfig()
+         (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
          handleRequest(HttpMethod.Get, "/protected") {
@@ -110,13 +110,15 @@ class ApiTest {
       }
    }
 
-   private fun MapApplicationConfig.setOidcConfig() {
+   private fun MapApplicationConfig.setDefaultConfig() {
       put("no.nav.security.jwt.issuers.size", "1")
       put("no.nav.security.jwt.issuers.0.issuer_name", ISSUER_ID)
       put("no.nav.security.jwt.issuers.0.discoveryurl", mockOAuth2Server.wellKnownUrl(ISSUER_ID).toString())
       put("no.nav.security.jwt.issuers.0.accepted_audience", REQUIRED_AUDIENCE)
       put("no.nav.security.jwt.required_issuer_name", ISSUER_ID)
       put("ktor.environment", "local")
+      put("no.nav.apigw.base_url", "http://localhost")
+      put("no.nav.apigw.api_key", "http://localhost")
    }
 
    private fun issueToken(acrLevel: String, audience: String): String =
