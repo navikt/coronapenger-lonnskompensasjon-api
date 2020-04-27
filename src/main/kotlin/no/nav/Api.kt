@@ -64,11 +64,17 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
 
       get("/ping") {
          val url = appConfig.property("no.nav.apigw.base_url").getString()
-         val apiKey = File("/secret/apikey/x-nav-apiKey").readText()
-         val pingResponse = httpClient.get<HttpResponse>("$url/ping") {
-            header("x-nav-apiKey", apiKey)
+         try {
+            val apiKey = File("/secret/apikey/x-nav-apiKey").readText()
+            log.info("Got API key")
+            val pingResponse = httpClient.get<HttpResponse>("$url/ping") {
+               header("x-nav-apiKey", apiKey)
+            }
+            call.respond(pingResponse.status, pingResponse.readText())
+         } catch (ex: Exception) {
+            log.warn("Error while calling gateway: ${ex.message}")
+            call.respondText("That didn't go so well...")
          }
-         call.respond(pingResponse.status, pingResponse.readText())
       }
    }
 }
