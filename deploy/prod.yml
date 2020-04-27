@@ -3,7 +3,7 @@
 "vault_path_fragment_api_key": "prod"
 "cluster": "prod"
 "ktor_env": "prod"
-"apigw_url": "https://api-gw-sbs.oera.no/kp-saksbehandling/kp-saksbehandling"
+"apigw_url": "https://api-gw-sbs.oera.no/kp-saksbehandling"
 "api_key_postfix": ""
 "ingresses": [
    "https://coronapenger-lonnskompensasjon-api.nais.oera.no",

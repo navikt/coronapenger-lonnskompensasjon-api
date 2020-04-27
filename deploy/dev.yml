@@ -3,7 +3,7 @@
 "vault_path_fragment_api_key": "dev"
 "cluster": "preprod"
 "ktor_env": "dev"
-"apigw_url": "https://api-gw-q1.oera.no/kp-saksbehandling/kp-saksbehandling"
+"apigw_url": "https://api-gw-q1.oera.no/kp-saksbehandling"
 "api_key_postfix": "_q1"
 "ingresses": [
    "https://coronapenger-lonnskompensasjon-api.nais.oera-q.local",
