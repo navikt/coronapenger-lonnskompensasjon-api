@@ -72,7 +72,7 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
             }
             call.respond(pingResponse.status, pingResponse.readText())
          } catch (ex: Exception) {
-            log.warn("Error while calling gateway: ${ex.message}")
+            log.error("Error while calling gateway", ex)
             call.respondText("That didn't go so well...")
          }
       }
