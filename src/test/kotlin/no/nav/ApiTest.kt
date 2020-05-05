@@ -150,6 +150,7 @@ class ApiTest {
             addHeader(HttpHeaders.Authorization, token)
          }.apply {
             assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals("application/json; charset=UTF-8", response.headers[HttpHeaders.ContentType])
             assertEquals("""{"message":"this is super"}""", response.content)
          }
 
@@ -159,6 +160,7 @@ class ApiTest {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
          }.apply {
             assertEquals(HttpStatusCode.OK, response.status())
+            assertEquals("application/json; charset=UTF-8", response.headers[HttpHeaders.ContentType])
             assertEquals("""{"key":"value"}""", response.content)
          }
       }

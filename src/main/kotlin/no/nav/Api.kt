@@ -19,6 +19,7 @@ import io.ktor.client.statement.readText
 import io.ktor.config.ApplicationConfig
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -26,6 +27,7 @@ import io.ktor.request.header
 import io.ktor.request.path
 import io.ktor.request.receiveText
 import io.ktor.response.respond
+import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
@@ -81,7 +83,11 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
                   header(HttpHeaders.Authorization, "Bearer ${jwtFrom(call)}")
                   header(HttpHeaders.Accept, call.request.header(HttpHeaders.Accept))
                }
-               call.respond(response.status, response.readText())
+               call.respondText(
+                  text = response.readText(),
+                  contentType = response.headers[HttpHeaders.ContentType]?.let { ContentType.parse(it) } ?: ContentType.Application.Json,
+                  status = response.status
+               )
             } ?: call.respond(HttpStatusCode.BadRequest, "query parameter path mangler")
          }
 
@@ -94,7 +100,11 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
                   header(HttpHeaders.ContentType, call.request.header(HttpHeaders.ContentType))
                   body = call.receiveText()
                }
-               call.respond(response.status, response.readText())
+               call.respondText(
+                  text = response.readText(),
+                  contentType = response.headers[HttpHeaders.ContentType]?.let { ContentType.parse(it) } ?: ContentType.Application.Json,
+                  status = response.status
+               )
             } ?: call.respond(HttpStatusCode.BadRequest, "query parameter path mangler")
          }
       }
