@@ -1,23 +1,37 @@
 package no.nav
 
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.config.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.serialization.*
-import no.nav.security.token.support.ktor.*
-import org.slf4j.event.*
+import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.defaultRequest
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.readText
+import io.ktor.config.ApplicationConfig
+import io.ktor.features.CORS
+import io.ktor.features.CallLogging
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.request.header
+import io.ktor.request.path
+import io.ktor.request.receiveText
+import io.ktor.response.respond
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.routing
+import no.nav.security.token.support.ktor.RequiredClaims
+import no.nav.security.token.support.ktor.tokenValidationSupport
+import org.slf4j.event.Level
 
 @io.ktor.util.KtorExperimentalAPI
 fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
@@ -35,10 +49,6 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
          claimMap = arrayOf("acr=Level4")
       )
       )
-   }
-
-   install(ContentNegotiation) {
-      serialization(contentType = ContentType.Application.Json)
    }
 
    install(CORS) {
@@ -63,12 +73,38 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
          get("/protected") {
             call.respond("Hello from protected")
          }
-      }
 
-      get("/ping") {
-         val pingResponse = httpClient.get<HttpResponse>("$apigwBaseUrl/ping")
-         call.respond("${pingResponse.status} ${pingResponse.readText()}")
+         get() {
+            val params = call.request.queryParameters
+            params["path"]?.let {
+               val response = httpClient.get<HttpResponse>("$apigwBaseUrl/${it.removePrefix("/")}") {
+                  header(HttpHeaders.Authorization, "Bearer ${jwtFrom(call)}")
+                  header(HttpHeaders.Accept, call.request.header(HttpHeaders.Accept))
+               }
+               call.respond(response.status, response.readText())
+            } ?: call.respond(HttpStatusCode.BadRequest, "query parameter path mangler")
+         }
+
+         post() {
+            val params = call.request.queryParameters
+            params["path"]?.let {
+               val response = httpClient.post<HttpResponse>("$apigwBaseUrl/${it.removePrefix("/")}") {
+                  header(HttpHeaders.Authorization, "Bearer ${jwtFrom(call)}")
+                  header(HttpHeaders.Accept, call.request.header(HttpHeaders.Accept))
+                  header(HttpHeaders.ContentType, call.request.header(HttpHeaders.ContentType))
+                  body = call.receiveText()
+               }
+               call.respond(response.status, response.readText())
+            } ?: call.respond(HttpStatusCode.BadRequest, "query parameter path mangler")
+         }
       }
    }
 }
+
+private fun jwtFrom(call: ApplicationCall) = call.request.header("Authorization")?.let {
+   it.split(" ")[1]
+} ?: call.request.cookies.let {
+   it["selvbetjening-idtoken"]
+      ?.split(" ")?.get(0)
+} ?: throw Exception("Couldn't retrieve jwt from call")
 

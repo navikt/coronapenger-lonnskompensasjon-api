@@ -54,6 +54,7 @@ dependencies {
    }
    testImplementation("org.assertj:assertj-core:3.15.0")
    testImplementation("no.nav.security:mock-oauth2-server:$mockOauthVersion")
+   testImplementation("com.github.tomakehurst:wiremock-standalone:2.23.2")
 }
 
 java {
