@@ -7,5 +7,5 @@
 "api_key_postfix": ""
 "ingresses": [
    "https://coronapenger-lonnskompensasjon-api.nais.oera.no",
-   "https://www.nav.no/lonnskompensasjon-api"
+   "https://www.nav.no/dagpenger/coronapenger-lonnskompensasjon-api"
 ]
