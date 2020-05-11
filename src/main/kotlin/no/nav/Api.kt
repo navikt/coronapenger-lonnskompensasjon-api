@@ -35,6 +35,8 @@ import no.nav.security.token.support.ktor.RequiredClaims
 import no.nav.security.token.support.ktor.tokenValidationSupport
 import org.slf4j.event.Level
 
+const val basePath = "/dagpenger/coronapenger-lonnskompensasjon-api"
+
 @io.ktor.util.KtorExperimentalAPI
 fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
    install(CallLogging) {
@@ -76,7 +78,7 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
             call.respond("Hello from protected")
          }
 
-         get() {
+         get(basePath) {
             val params = call.request.queryParameters
             params["path"]?.let {
                val response = httpClient.get<HttpResponse>("$apigwBaseUrl/${it.removePrefix("/")}") {
@@ -91,7 +93,7 @@ fun Application.api(appConfig: ApplicationConfig = this.environment.config) {
             } ?: call.respond(HttpStatusCode.BadRequest, "query parameter path mangler")
          }
 
-         post() {
+         post(basePath) {
             val params = call.request.queryParameters
             params["path"]?.let {
                val response = httpClient.post<HttpResponse>("$apigwBaseUrl/${it.removePrefix("/")}") {

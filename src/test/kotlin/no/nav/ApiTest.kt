@@ -146,7 +146,7 @@ class ApiTest {
          (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
-         handleRequest(HttpMethod.Get, "?path=/api/whatever") {
+         handleRequest(HttpMethod.Get, "$basePath?path=/api/whatever") {
             addHeader(HttpHeaders.Authorization, token)
          }.apply {
             assertEquals(HttpStatusCode.OK, response.status())
@@ -154,7 +154,7 @@ class ApiTest {
             assertEquals("""{"message":"this is super"}""", response.content)
          }
 
-         handleRequest(HttpMethod.Post, "?path=/api/whatever") {
+         handleRequest(HttpMethod.Post, "$basePath?path=/api/whatever") {
             setBody("""{"key":"value"}""")
             addHeader(HttpHeaders.Authorization, token)
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
@@ -172,7 +172,7 @@ class ApiTest {
          (environment.config as MapApplicationConfig).setDefaultConfig()
          api()
       }) {
-         handleRequest(HttpMethod.Get, "?no=go") {
+         handleRequest(HttpMethod.Get, "$basePath?no=go") {
             addHeader(HttpHeaders.Authorization, "Bearer ${issueToken(acrLevel = "Level4", audience = REQUIRED_AUDIENCE)}")
          }.apply {
             assertEquals(HttpStatusCode.BadRequest, response.status())
