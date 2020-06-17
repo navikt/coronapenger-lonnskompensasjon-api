@@ -10,6 +10,9 @@ val coroutinesVersion = "1.3.3"
 val serializerVersion = "0.14.0"
 val tokenValidatorVersion = "1.1.4"
 val mockOauthVersion = "0.1.31"
+val s3sdkVersion = "1.11.804"
+val localstackVersion = "1.14.3"
+val jaxbVersion = "2.3.1"
 
 group = "no.nav.corona"
 
@@ -45,6 +48,9 @@ dependencies {
 
    implementation("no.nav.security:token-validation-ktor:$tokenValidatorVersion")
 
+   implementation("com.amazonaws:aws-java-sdk-s3:$s3sdkVersion")
+   implementation("javax.xml.bind:jaxb-api:$jaxbVersion")
+
    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
@@ -55,6 +61,8 @@ dependencies {
    testImplementation("org.assertj:assertj-core:3.15.0")
    testImplementation("no.nav.security:mock-oauth2-server:$mockOauthVersion")
    testImplementation("com.github.tomakehurst:wiremock-standalone:2.23.2")
+
+   testImplementation("org.testcontainers:localstack:$localstackVersion")
 }
 
 java {
