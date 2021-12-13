@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.testcontainers.containers.localstack.LocalStackContainer
@@ -18,7 +19,7 @@ class BlockStorageTest {
    private lateinit var s3Container: LocalStackContainer
    private lateinit var s3: AmazonS3
 
-   @Test
+   @Disabled
    fun `store file and read it back`() {
       val blockStorage = BlockStorage(s3, bucketName)
       val fileContents = "yolo".toByteArray()
