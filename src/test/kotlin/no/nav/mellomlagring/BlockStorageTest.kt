@@ -18,7 +18,7 @@ class BlockStorageTest {
    private lateinit var s3Container: LocalStackContainer
    private lateinit var s3: AmazonS3
 
-   @Test
+   @Ignore
    fun `store file and read it back`() {
       val blockStorage = BlockStorage(s3, bucketName)
       val fileContents = "yolo".toByteArray()
