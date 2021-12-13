@@ -5,6 +5,7 @@ val junitJupiterVersion = "5.6.2"
 val ktorVersion = "1.3.1"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
+val log4jVersion = "2.15.0"
 val logstashEncoderVersion = "6.3"
 val coroutinesVersion = "1.3.3"
 val serializerVersion = "0.14.0"
@@ -41,9 +42,9 @@ dependencies {
    implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
    implementation("org.slf4j:slf4j-api:$slf4jVersion")
-   implementation("org.apache.logging.log4j:log4j-api:2.13.0")
-   implementation("org.apache.logging.log4j:log4j-core:2.13.0")
-   implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.13.0")
+   implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
+   implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
+   implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
    implementation("com.vlkan.log4j2:log4j2-logstash-layout-fatjar:0.19")
 
    implementation("no.nav.security:token-validation-ktor:$tokenValidatorVersion")
